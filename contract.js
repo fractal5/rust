@@ -29,6 +29,31 @@ var commentsForAPath = {
   }
 };
 
+// GET to /api/comments/get/user - get comments for logged in user 
+// + total comments for the user.
+// Similar to above API, but also returns total number of comments
+// in the returned data.
+// Client sends:
+var requestCommentsForUser = {
+  oldestLoadedCommentId: 'number', // undefined on initial load
+}
+
+// Server returns:
+var data {
+  comments: [{
+    Url: {
+      url: 'parsedUrl',
+    },
+    User: {
+      name: 'string'
+    },
+    text: 'string',
+    createdAt: 'date',
+    isPrivate: 'boolean'
+  }],
+  numComments: 'int'
+};
+
 // POST request to api/comments
 // extension sends:
 var extCommentPostRequestBody = {

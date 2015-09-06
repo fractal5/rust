@@ -4,7 +4,10 @@ var Heart = require('../').Heart;
 var Flag = require('../').Flag;
 var Url = require('../').Url;
 
-var get = function(searchObject, lastCommentId) {
+<<<<<<< HEAD
+// @param getTotalCount: undefined if the total count of these
+// comment types is not needed.
+var get = function(searchObject, lastCommentId, getTotalCount) {
   console.log('line 8 comment cotrl',searchObject);
   var attributes = ['text', 'User.name', 'RepliesTo']; 
   var queryObject = {
@@ -35,7 +38,8 @@ var get = function(searchObject, lastCommentId) {
   // return in ascending order of commentid
   queryObject.order = [['id', 'DESC']];
   console.log('query', queryObject);
-  return Comment.findAll(queryObject)
+  
+  return Comment.findAndCountAll(queryObject)
     .then(function(results) {
       // Iterate over our results array and update the number of hearts and favorites so
       // we don't return the ENTIRE array.
@@ -44,6 +48,11 @@ var get = function(searchObject, lastCommentId) {
         results[index].dataValues.Flags = results[index].dataValues.Flags.length;
       });
 
+      // If we don't require the count value, return the rows only
+      console.log("Commments get: total count " + results.count);
+      if (!getTotalCount) {
+        results = results.rows;
+      }
       return results;
     })
     .catch(function(err) {

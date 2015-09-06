@@ -1,4 +1,5 @@
 var React = require('react');
+var ProfileHeader = require('./ProfileHeader');
 var Comment = require('./Comment');
 
 // At the moment, Profile will only be used to display your personal
@@ -12,10 +13,12 @@ var Profile = React.createClass({
   getInitialState: function() {
     return {
       comments: [],
-      maxCommentId: -1
-    };
+      numComments: 0,
+      oldestLoadedCommentId: -1
+    }
   },
 
+  // Returns comments ordered from newer to older.
   // TODO: refactor to use to load additional comments too.
   init: function() {
     $.ajax({
@@ -27,10 +30,11 @@ var Profile = React.createClass({
         console.log('Profile init: successfully loaded user comments');
         console.log(data);
 
-        var maxCommentId = data.comments[data.comments.length - 1].id;
+        var oldestLoadedCommentId = data.comments[data.comments.length - 1].id;
         this.setState({
           comments: data.comments,
-          maxCommentId: maxCommentId
+          numComments: data.numComments,
+          oldestLoadedCommentId: oldestLoadedCommentId
         });
       }.bind(this),
       error: function(xhr, status, err) {
@@ -49,8 +53,16 @@ var Profile = React.createClass({
     });
 
     return (
-      <div className="row">
-        {comments}
+      <div>
+        <ProfileHeader displayName={this.state.comments[0].User.name} numComments={this.state.numComments}/>
+        <div className="row">
+          <div className="col-md-4">
+            <h2>Analytics</h2>
+          </div>
+          <div className="col-md-8">
+            {comments}
+          </div>
+        </div>
       </div>
     );
   }
