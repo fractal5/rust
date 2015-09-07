@@ -29,7 +29,7 @@ var commentsForAPath = {
   }
 };
 
-// GET to /api/comments/get/user - get comments for logged in user 
+// GET to /api/comments/get/user - get comments for logged in user
 // + total comments for the user.
 // Similar to above API, but also returns total number of comments
 // in the returned data.
@@ -40,6 +40,7 @@ var requestCommentsForUser = {
 
 // Server returns:
 var data {
+  displayName: 'string',
   comments: [{
     Url: {
       url: 'parsedUrl',
@@ -51,7 +52,8 @@ var data {
     createdAt: 'date',
     isPrivate: 'boolean'
   }],
-  numComments: 'int'
+  numComments: 'int', 
+  currentTime: 'date'
 };
 
 // POST request to api/comments

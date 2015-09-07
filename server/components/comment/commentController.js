@@ -4,7 +4,6 @@ var Heart = require('../').Heart;
 var Flag = require('../').Flag;
 var Url = require('../').Url;
 
-<<<<<<< HEAD
 // @param getTotalCount: undefined if the total count of these
 // comment types is not needed.
 var get = function(searchObject, lastCommentId, getTotalCount) {
@@ -28,6 +27,7 @@ var get = function(searchObject, lastCommentId, getTotalCount) {
     };
 
   if (!(lastCommentId === 'undefined' || lastCommentId === undefined)) {
+    console.log('Comments get: lastCommentId not undefined, is ' + lastCommentId);
     queryObject.where.id = {};
     queryObject.where.id.$lt = lastCommentId;
   } 
@@ -43,17 +43,19 @@ var get = function(searchObject, lastCommentId, getTotalCount) {
     .then(function(results) {
       // Iterate over our results array and update the number of hearts and favorites so
       // we don't return the ENTIRE array.
-      results.forEach(function(element, index, array) {
-        results[index].dataValues.Hearts = results[index].dataValues.Hearts.length;
-        results[index].dataValues.Flags = results[index].dataValues.Flags.length;
+      var resultRows = results.rows;
+      resultRows.forEach(function(element, index, array) {
+        resultRows[index].dataValues.Hearts = resultRows[index].dataValues.Hearts.length;
+        resultRows[index].dataValues.Flags = resultRows[index].dataValues.Flags.length;
       });
 
       // If we don't require the count value, return the rows only
       console.log("Commments get: total count " + results.count);
       if (!getTotalCount) {
-        results = results.rows;
+        return results.rows;
+      } else {
+        return results;
       }
-      return results;
     })
     .catch(function(err) {
       console.log("Err getting comments: ", err);

@@ -12,9 +12,12 @@ var Comment = require('./Comment');
 var Profile = React.createClass({
   getInitialState: function() {
     return {
+      displayName: '',
       comments: [],
       numComments: 0,
-      oldestLoadedCommentId: -1
+      // API expects string 'undefined' on first load
+      oldestLoadedCommentId: 'undefined',
+      currentTime: undefined
     }
   },
 
@@ -23,18 +26,23 @@ var Profile = React.createClass({
   init: function() {
     $.ajax({
       url: window.location.origin + '/api/comments/get/user',
-      // data: {maxCommentId: this.state.maxCommentId},
+      data: {oldestLoadedCommentId: this.state.oldestLoadedCommentId},
       method: 'GET',
       dataType: 'json',
       success: function(data) {
         console.log('Profile init: successfully loaded user comments');
         console.log(data);
 
-        var oldestLoadedCommentId = data.comments[data.comments.length - 1].id;
+        // XXX EE: what's the right thing to store here?
+        // For now, if no comments returned, keep it the same as it was.
+        var oldestLoadedCommentId = data.comments.length > 0 ?
+          data.comments[data.comments.length - 1].id : oldestLoadedCommentId;
         this.setState({
+          displayName: data.displayName,
           comments: data.comments,
           numComments: data.numComments,
-          oldestLoadedCommentId: oldestLoadedCommentId
+          oldestLoadedCommentId: oldestLoadedCommentId,
+          currentTime: data.currentTime
         });
       }.bind(this),
       error: function(xhr, status, err) {
@@ -54,10 +62,10 @@ var Profile = React.createClass({
 
     return (
       <div>
-        <ProfileHeader displayName={this.state.comments[0].User.name} numComments={this.state.numComments}/>
         <div className="row">
           <div className="col-md-4">
-            <h2>Analytics</h2>
+            <h2>{this.state.displayName}</h2>
+            <p>Total Comments: {this.state.numComments}</p>
           </div>
           <div className="col-md-8">
             {comments}

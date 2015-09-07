@@ -148,16 +148,17 @@ module.exports = function(app) {
     }
 
     var userId = req.user.id;
-    var oldestLoadedCommentId = req.query.oldestLoadedCommentId || null;
-    console.log("Comments: get comments for userId " + userId + " maxCommentId " + oldestLoadedCommentId);
+    console.log("Comments: get comments for userId " + userId + " maxCommentId " + req.query.oldestLoadedCommentId);
     console.log("Comments: get comments req.query");
     console.log(req.query);
 
-    Comment.get({UserId: userId}, oldestLoadedCommentId)
+    Comment.get({UserId: userId}, req.query.oldestLoadedCommentId, true)
       .then(function(data) {
         res.send(200, {
+          displayName: req.user.name,
           comments: data.rows,
-          numComments: data.count
+          numComments: data.count,
+          currentTime: new Date()
         });
       })
       .catch(function(err) {
