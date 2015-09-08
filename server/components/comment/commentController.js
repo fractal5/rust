@@ -6,9 +6,20 @@ var Url = require('../').Url;
 
 // @param getTotalCount: undefined if the total count of these
 // comment types is not needed.
-var get = function(searchObject, lastCommentId, getTotalCount) {
+//
+// @param urlToFind: Comes from req.query.url -- set to 'undefined' if 
+// not actively searching on this field.
+var get = function(searchObject, lastCommentId, getTotalCount, urlToFind) {
   console.log('line 8 comment cotrl', searchObject);
   var attributes = ['text', 'User.name', 'RepliesTo'];
+  var urlQuery = {};
+
+  // Set up a url filter if needed.
+  if (urlToFind !== 'undefined') {
+    console.log("Comments get: filtering on url " + urlToFind);
+    urlQuery = {url: {$like: '%' + urlToFind + '%'}};
+  }
+
   var queryObject = {
     where: searchObject,
     include: [{
@@ -21,8 +32,11 @@ var get = function(searchObject, lastCommentId, getTotalCount) {
       model: Flag,
       attributes: ['id']
     }, {
+      // XXX EE: experimenting with adding a where clause here to
+      // search for a url
       model: Url,
-      attributes: ['url']
+      attributes: ['url'],
+      where: urlQuery
     }]
   };
 
